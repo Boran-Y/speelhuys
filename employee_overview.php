@@ -42,5 +42,5 @@ $connectie->close();
 <div class="container">
     <h1>Employee pagina</h1>
     <p>what the sigma</p>
-    <img src="https://media1.tenor.com/m/usq5pdrpMjoAAAAC/could-you-repeat-that.gif" alt="Guh??" width="900" height="540" style="vertical-align:middle">
+    <iframe width="1280" height="720" src="https://www.youtube.com/embed/5_tldtA2IzI?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
