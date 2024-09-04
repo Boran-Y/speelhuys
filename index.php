@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($userId) {
         Sessie::setUserId($userId);  // Zet de user ID in de sessie
         $userRole = $gebruiker->getUserRole($userId);
-        
+
         if ($userRole === 'admin') {
             header("Location: admin_overview.php");  // Redirect naar admin pagina
         } elseif ($userRole === 'employee') {
@@ -31,21 +31,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <div class="container">
+    <link rel="stylesheet" href="style.css">
     <h1>Login</h1>
     <?php if (isset($error)): ?>
         <div class="alert alert-danger">
             <?= htmlspecialchars($error) ?>
         </div>
     <?php endif; ?>
-    <form method="post">
-        <div class="form-group">
-            <label for="naam">Naam</label>
-            <input type="text" class="form-control" id="naam" name="naam" required>
+    <form>
+        <div class="login">
+            <img src="../images/pop.jpg" alt="" class="login__bg">
+            <form action="admin_overview.php" class="login__form" method="POST"  enctype="multipart/form-data">
+                <img src="6998021.png" alt="Avatar" class="avatar">
+                <h1 class="login__title">Login</h1>
+
+                <div class="login__inputs">
+                    <div class="login__box">
+                        <input type="username" placeholder="gebruikersnaam" name="gebruikersnaam" required class="login__input">
+                        <i class="ri-mail-fill"></i>
+                    </div>
+
+                    <div class="login__box">
+                        <input type="password" placeholder="wachtwoord" name="wachtwoord" required class="login__input">
+                        <i class="ri-lock-2-fill"></i>
+                    </div>
+                </div>
+
+                <button type="submit" value="inloggen" class="login__button">Login</button>
+
+            </form>
         </div>
-        <div class="form-group">
-            <label for="wachtwoord">Wachtwoord</label>
-            <input type="wachtwoord" class="form-control" id="wachtwoord" name="wachtwoord" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
     </form>
-</div>

@@ -1,16 +1,27 @@
 <?php
 
-$servername = "127.0.0.1"; // databasehost ip adres
-$username = "root"; // databasegebruikersnaam
-$password = ""; // database wachtwoord
-$dbname = "speelhuys"; // database naam
+class Database
+{
+    private string $servername = "127.0.0.1";
+    private string $username = "root";
+    private string $password = "";
+    private string $database = "keukenprins";
 
-// Connectie
-$connectie = new mysqli($servername, $username, $password, $dbname);
+    public $connection;
 
-// Connectie error
-if ($connectie->connect_error) {
-    die("Verbinding mislukt: " . $connectie->connect_error);
+    public function start()
+    {
+
+        $this->connection = new mysqli($this->servername, $this->username, $this->password, $this->database);
+
+
+        if ($this->connection->connect_error) {
+            die("connectie mislukt " . $this->connection->connect_error);
+        }
+    }
+
+    public function close()
+    {
+        $this->connection->close();
+    }
 }
-
-?>
