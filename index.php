@@ -3,7 +3,7 @@ include_once "database.php";
 include_once "gebruiker.php";
 include_once "sessie.php";
 
-Sessie::start(); // Zorgt ervoor dat een sessie gestart word
+Sessions::start(); // Zorgt ervoor dat een sessie gestart word
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $naam = $_POST['naam'];
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $userId = $gebruiker->validateLogin($naam, $wachtwoord);
 
     if ($userId) {
-        Sessie::setUserId($userId);  // Zet de user ID in de sessie
+        Sessions::userId($userId);  // Zet de user ID in de sessie
         $userRole = $gebruiker->getUserRole($userId);
 
         if ($userRole === 'admin') {
@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php endif; ?>
     <form>
         <div class="login">
-            <img src="../images/pop.jpg" alt="" class="login__bg">
-            <form action="admin_overview.php" class="login__form" method="POST"  enctype="multipart/form-data">
+           
+            <form action="admin_overview.php" class="login__form" method="POST" enctype="multipart/form-data">
                 <img src="6998021.png" alt="Avatar" class="avatar">
                 <h1 class="login__title">Login</h1>
 
@@ -62,3 +62,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
         </div>
     </form>
+
+    <?php
+
+include 'sessie.php';
+include 'gebruiker.php';
+
+if (isset($_POST["gebruikersnaam"])) {
+  $username = $_POST["gebruikersnaam"];
+  $password = $_POST["wachtwoord"];
+
+  $users  = User::findByUsernameAndPassword($username, $password);
+  if (count($users) == 0) {
+    echo'<script>alert("fout gevonden")</script>';
+    header("location: index.php");
+    exit;
+  }
+
+
+  $key = md5(uniqid(rand(), true));
+  $session = new sessions();
+  $session->sessionUserId =  $users[0]->userId;
+  $session->sessionKey = $key;
+  $session->sessionStart = date("Y-m-d H : i :s");
+  $session->sessionEnd = date("Y-m-d H:i : s ", strtotime("+1 month"));
+  $session->insert();
+
+  setcookie("keukenprins-session", $key, strtotime("+1 month"), "/");
+  header("location: admin.php");
+}
+?>
