@@ -1,5 +1,5 @@
 <?php
-class User
+class Gebruiker
 {
     public int $userId;
     public string $userFirstname;
@@ -8,8 +8,27 @@ class User
     public string $userUSername;
     public string $userPassword;
     public string $userRole;
-  
+
+
     
+    public function getUserRole($userId) {
+
+        $database = new Database();
+        $database->start();
+
+        // Haalt gegevens van uit de database om een role op te halen
+        $stmt = $database->connection->prepare("SELECT user_role FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['user_role'];
+    }
+    return null;
+    $database->close();
+}
     public function insert()
     {
         
@@ -72,7 +91,7 @@ class User
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $user = new User();
+                $user = new Gebruiker();
                 $user->userId = $row['user_id'];
                 $user->userFirstname = $row['user_firstname'];
                 $user->userLastname = $row['user_lastname'];
