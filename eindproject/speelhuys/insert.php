@@ -1,18 +1,16 @@
 <?php
-
-include 'database.php';
 include 'sets.php';
 
-$image = null;
+$database = new database();
+$database->start();
 
-
-$set = sets::find($_GET['id']);
-
-if (!isset($_GET["id"])) {
-    header("location: index.php");
-    exit;
+$set = sets::find($_GET["id"]);
+if ( $set == null)
+{
+    header("location:admin_overview.php");
 }
 
+$image = null;
 
 
 if (isset($_POST["submit"])) {
@@ -24,7 +22,7 @@ if (isset($_POST["submit"])) {
         move_uploaded_file($_FILES['bestand']['tmp_name'], $target);
     }
 
-    
+    $set = new sets;
     $sets->name = $_POST["name"];
     $sets->description = $_POST["description"];
     $sets->brandid = $_POST["brand_id"];
@@ -34,13 +32,11 @@ if (isset($_POST["submit"])) {
     $sets->age = $_POST["age"];
     $sets->pieces = $_POST["pieces"];
     $sets->stock = $_POST["stock"];
-    $sets->update();
-
-    header("location: admin.php?file= $image");
+    $sets->insert();
+    header("location: admin_overview.php?file= $image");
     exit;
+    $database->close();
 }
-
-
 ?>
 
 <!doctype html>

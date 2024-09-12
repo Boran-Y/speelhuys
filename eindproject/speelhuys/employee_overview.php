@@ -4,9 +4,9 @@ include_once "sessie.php";
 include_once "gebruiker.php";
 include_once "sets.php";
 
-Sessie::start(); // verzekerd dat de sessie gestart is
+Sessions::findActiveSessions(); // verzekerd dat de sessie gestart is
 
-$userId = Sessie::getUserId();
+$userId = Sessions::$userRole();
 if (!$userId) {
     // Redirect naar de login pagina als er nog niet ingelogd is
     header("Location: index.php");
@@ -14,7 +14,7 @@ if (!$userId) {
 }
 
 $gebruiker = new Gebruiker();
-$userRole = $gebruiker->getUserRole($userId);
+$userRole = $gebruiker->$UserRole($userId);
 if ($userRole !== 'employee') {
     // Redirect naar login als je niet een employee bent
     header("Location: index.php");
@@ -29,7 +29,7 @@ if ($result_speelhuys->num_rows > 0) {
     echo "<table border='1'><tr><th>item name</th><th>description</th><th>prices</th></tr>";
     while($row = $result_speelhuys->fetch_assoc()) {
         $sets = new sets($row["set_name"], $row["set_description"], $row["set_price"]);
-        echo "<tr><td>" . $sets->getName() . "</td><td>" . $sets->getDescription() . "</td><td>" .  "$".$sets->getPrices() . "</td></tr>";
+        echo "<tr><td>" . $sets->getName() . "</td><td>" . $sets->getDescription() . "</td><td>" .  "$".$sets->getPrice() . "</td></tr>";
     }
     echo "</table>";
 } else {

@@ -1,5 +1,5 @@
 <?php
-class sessions
+class Sessions
 {
     public int $sessionId;
     public int $sessionUserId;
@@ -12,12 +12,13 @@ class sessions
     public function insert()
     {
 
-        include 'connectie.php';
+        $database = new Database();
+        $database->start();
 
-        $sessionUserId = mysqli_real_escape_string($conn, $this->sessionUserId);
-        $sessionKey = mysqli_real_escape_string($conn, $this->sessionKey);
-        $sessionStart = mysqli_real_escape_string($conn, $this->sessionStart);
-        $sessionEnd = mysqli_real_escape_string($conn, $this->sessionEnd);
+        $sessionUserId = mysqli_real_escape_string($database->connection, $this->sessionUserId);
+        $sessionKey = mysqli_real_escape_string($database->connection, $this->sessionKey);
+        $sessionStart = mysqli_real_escape_string($database->connection, $this->sessionStart);
+        $sessionEnd = mysqli_real_escape_string($database->connection, $this->sessionEnd);
 
 
         $sql = "INSERT INTO sessions
@@ -37,15 +38,18 @@ class sessions
     
     )";
 
-    $conn->query($sql);
-
-        $conn->close();
+    $result = $database->connection->query($sql);
+    $database->close();
     }
 
 
 
     public static function findActiveSessions()
     {
+
+        $database = new Database();
+        $database->start();
+
         $sessions = [];
 
         if (isset($_COOKIE["steptember-session"])); {
@@ -68,9 +72,8 @@ class sessions
                     $sessions[] = $session;
                 }
 
-                $conn->close();
             }
-
+            $database->close();
             return $sessions;
         }
     }

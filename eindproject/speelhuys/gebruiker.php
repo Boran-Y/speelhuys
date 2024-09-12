@@ -1,5 +1,5 @@
 <?php
-class User
+class Gebruiker
 {
     public int $userId;
     public string $userFirstname;
@@ -72,7 +72,7 @@ class User
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $user = new User();
+                $user = new Gebruiker();
                 $user->userId = $row['user_id'];
                 $user->userFirstname = $row['user_firstname'];
                 $user->userLastname = $row['user_lastname'];
