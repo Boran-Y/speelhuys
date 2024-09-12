@@ -1,18 +1,39 @@
+<table border="1">
+  
+  <tr>
+  <td><strong>set_id</strong></td>
+    <td><strong>set_name</strong></td>
+    <td><strong>set_description</strong></td>
+    <td><strong>set_brand_id</strong></td>
+    <td><strong>set_theme_id</strong></td>
+    <td><strong>set_price</strong></td>
+    <td><strong>set_image</strong></td>
+    <td><strong>set_age</strong></td>
+    <td><strong>set_pieces</strong></td>
+    <td><strong>set_stock</strong></td>
+
+  </tr>
+
+
+
+
+
+
+
 <?php
-include_once "database.php";
-include_once "sessie.php";
-include_once "gebruiker.php";
-include_once "sets.php";
+include "database.php";
+include "sessie.php";
+include "gebruiker.php";
+include "sets.php";
 
-Sessie::start(); // verzekerd dat de sessie gestart is
+Sessions::start(); // verzekerd dat de sessie gestart is
 
-$userId = Sessie::getUserId();
+$userId = Sessions::getUserId();
 if (!$userId) {
     // Redirect naar de login pagina als er nog niet ingelogd is
     header("Location: index.php");
     exit;
 }
-
 $gebruiker = new Gebruiker();
 $userRole = $gebruiker->getUserRole($userId);
 if ($userRole !== 'employee') {
@@ -21,26 +42,30 @@ if ($userRole !== 'employee') {
     exit;
 }
 
-$sql_sets = "SELECT * FROM `sets`";
-$result_speelhuys = $connectie->query($sql_sets);
+$sets = sets::FindAll();
+foreach ($sets as $set){
+echo "<tr>";
+echo "<td>" . $set->id . "</td>";
+echo "<td>" . $set->name . "</td>";
+echo "<td>" . $set->description . "</td>";
+echo "<td>" . $set->brandid . "</td>";
+echo "<td>" . $set->themeid . "</td>";
+echo "<td>" . $set->price . "</td>";
+echo "<td>" . $set->image . "</td>";
+echo "<td>" . $set->age   .  "</td>";
+echo "<td>" . $set->pieces . "</td>";
+echo "<td>" . $set->stock . "</td>";
 
-echo "<center><h2>sets</h2></center>";
-if ($result_speelhuys->num_rows > 0) {
-    echo "<table border='1'><tr><th>item name</th><th>description</th><th>prices</th></tr>";
-    while($row = $result_speelhuys->fetch_assoc()) {
-        $sets = new sets($row["set_name"], $row["set_description"], $row["set_price"]);
-        echo "<tr><td>" . $sets->getName() . "</td><td>" . $sets->getDescription() . "</td><td>" .  "$".$sets->getPrices() . "</td></tr>";
-    }
-    echo "</table>";
-} else {
-    echo "Geen sets gevonden";
+echo "</tr>";
+
+
 }
-$connectie->close();
 
 ?>
 
 <div class="container">
+<link rel="stylesheet" href="style.css">
     <h1>Employee pagina</h1>
     <p>what the sigma</p>
-    <iframe width="1280" height="720" src="https://www.youtube.com/embed/5_tldtA2IzI?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  
 </div>
