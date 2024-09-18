@@ -2,26 +2,22 @@
 
 class Database
 {
-    private string $servername = "127.0.0.1";
-    private string $username = "root";
-    private string $password = "";
-    private string $database = "keukenprins";
-
-    public $connection;
-
-    public function start()
+    public static function start()
     {
+        $dbServername = "127.0.0.1";
+        $dbUsername = "root";
+        $dbPassword = "";
+        $dbDatabase = "speelhuys";
 
-        $this->connection = new mysqli($this->servername, $this->username, $this->password, $this->database);
+        $conn = new mysqli($dbServername, $dbUsername, $dbPassword, $dbDatabase);
 
-
-        if ($this->connection->connect_error) {
-            die("connectie mislukt " . $this->connection->connect_error);
+        if ($conn->connect_error)
+        {
+            die("Connectie mislukt: " . $conn->connect_error);
         }
-    }
 
-    public function close()
-    {
-        $this->connection->close();
+        return $conn;
     }
 }
+
+?>
