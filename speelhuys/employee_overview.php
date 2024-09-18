@@ -1,4 +1,4 @@
-<table border="1">
+<table border="1" class="table">
   
   <tr>
   <td><strong>set_id</strong></td>

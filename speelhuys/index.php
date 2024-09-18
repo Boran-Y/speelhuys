@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
            
         <form method="post">
         <div class="form-group">
-        <img src="6998021.png" alt="Avatar" class="avatar">
+        <center><img src="6998021.png" alt="Avatar" width="500px" class="avatar"></center>
             <div class="login__box">
                     <input type="username" placeholder="gebruikersnaam" name="gebruikersnaam" required class="login__input">
                     <i class="ri-mail-fill"></i>
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="password" placeholder="wachtwoord" name="wachtwoord" required class="login__input">
                     <i class="ri-lock-2-fill"></i>
                 </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+       <center><button type="submit" height="500px" class="btn">Login</button></center> 
     </form>
         </div>
     
