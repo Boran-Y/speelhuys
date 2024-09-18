@@ -1,152 +1,90 @@
 <?php
-class sets
-{
-    private $id;
-    private $name;
-    private $description;
-    private $brandid;
-    private $themeid;
-    private $image;
-    private $prices;
-    private $age;
-    private $pieces;
-    private $stock;
 
-    public function __construct($name, $description, $brandid, $themeid, $image, $prices, $age, $pieces, $stock)
+class Set
+{
+    public $id;
+    public $name;
+    public $description;
+    public $brandid;
+    public $themeid;
+    public $image;
+    public $price;
+    public $age;
+    public $pieces;
+    public $stock;
+
+
+    public static function Find($id)
     {
-        $this->name = $name;
-        $this->description = $description;
-        $this->brandid = $brandid;
-        $this->themeid = $themeid;
-        $this->prices = $prices;
-        $this->image = $image;
-        $this->age = $age;
-        $this->pieces = $age;
-        $this->stock = $stock;
-    }
-    
-
-public static function Find($id)
-{
-    $database = new database();
-    $database->start();
-
-    $id = mysqli_real_escape_string($database->connection, $id);
+        $conn = Database::start();
 
 
-    $sql = "
-    SELECT 
-        *
-    FROM 
-        sets
-    WHERE 
-    set_id = " . $id . "
+        $sql = "SELECT * FROM `sets` WHERE set_id = '$id'";
 
-    ";
-
-    //voer de query uit
-    $result = $database->connection->query($sql);
-
-    // maakt een lege set aan 
-    $set = null;
+        //voer de query uit
+        $result = $conn->query($sql);
 
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $set = new sets();
-        $set->id = $row['set_id'];
-        $set->name = $row['set_name'];
-        $set->description = $row['set_description'];
-        $set->brandid = $row['set_brand_id']; 
-        $set->themeid = $row['set_theme_id'];
-        $set->prices = $row['set_prices'];
-        $set->image = $row['set_age']; 
-        $set->age = $row['set_age'];
-        $set->pieces = $row['set_pieces'];
-        $set->stock = $row['set_stock']; 
-       
-    }
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $set = new Set();
+                $set->id = $row['set_id'];
+                $set->name = $row['set_name'];
+                $set->description = $row['set_description'];
+                $set->brandid = $row['set_brand_id'];
+                $set->themeid = $row['set_theme_id'];
+                $set->price = $row['set_price'];
+                $set->image = $row['set_image'];
+                $set->age = $row['set_age'];
+                $set->pieces = $row['set_pieces'];
+                $set->stock = $row['set_stock'];
+            }
 
-    $database->close();
+            $conn->close();
 
-    return $set;
-}
-
-    
-public static function FindAll()
-{
-  
-    $database = new Database();
-    $database->start();
-
-
-
-    $query = "SELECT * FROM  'sets'";
-    $result = $database->connection->query($query);
-
-    $sets = [];
-
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $set = new sets();
-            $set->id = $row['set_id'];
-            $set->name = $row['set_name'];
-            $set->description = $row['set_description'];
-            $set->brandid = $row['set_brand_id']; 
-            $set->themeid = $row['set_theme_id'];
-            $set->prices = $row['set_prices'];
-            $set->image = $row['set_age']; 
-            $set->age = $row['set_age'];
-            $set->pieces = $row['set_pieces'];
-            $set->stock = $row['set_stock']; 
-        
-
-            $set[] = $sets;
+            return $set;
         }
     }
-    $database->close();
 
-    return $set;
-}
 
-    public function getName()
+    public static function FindAll($offset = 0, $limit = 6, $search = '')
     {
-        return $this->name;
-    }
 
-    public function getDescription()
-    {
-        return $this->description;
-    }
+        $conn = Database::start();
 
-    public function getbrandid()
-    {
-        return $this->brandid;
-    }
-    public function getthemeid()
-    {
-        return $this->themeid;
-    }
+        $sql = "SELECT * FROM `sets` WHERE `set_name` LIKE ? LIMIT ?, ?";
+        $stmt = $conn->prepare($sql);
 
-    public function getPrices()
-    {
-        return $this->prices;
-    }
+        $search_term = '%' . $search . '%';
+        $stmt->bind_param('sii', $search_term, $offset, $limit);
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    public function getimage()
-    {
-        return $this->image;
-    }
+        $sets = [];
 
-    public function getpieces()
-    {
-        return $this->pieces;
-    }
 
-    public function getstock()
-    {
-        return $this->stock;
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $set = new Set();
+                $set->id = $row['set_id'];
+                $set->name = $row['set_name'];
+                $set->description = $row['set_description'];
+                $set->brandid = $row['set_brand_id'];
+                $set->themeid = $row['set_theme_id'];
+                $set->price = $row['set_price'];
+                $set->image = $row['set_image'];
+                $set->age = $row['set_age'];
+                $set->pieces = $row['set_pieces'];
+                $set->stock = $row['set_stock'];
+                $sets[] = $set;
+            }
+
+            $stmt->close();
+            $conn->close();
+
+            return $sets;
+        }
     }
 
 
@@ -154,18 +92,17 @@ public static function FindAll()
 
     public function update()
     {
-        $database = new database();
-        $database->start();
+        $conn = Database::start();
 
 
-        $id = mysqli_real_escape_string($database->connection, $this->id);
-        $name = mysqli_real_escape_string($database->connection, $this->name);
-        $description = mysqli_real_escape_string($database->connection, $this->description);
-        $brandid = mysqli_real_escape_string($database->connection, $this->brandid);
-        $themeid = mysqli_real_escape_string($database->connection, $this->themeid);
-        $prices = mysqli_real_escape_string($database->connection, $this->prices);
-        $image = mysqli_real_escape_string($database->connection, $this->image);
-        $age = mysqli_real_escape_string($database->connection, $this->age);
+        $id = mysqli_real_escape_string($conn, $this->id);
+        $name = mysqli_real_escape_string($conn, $this->name);
+        $description = mysqli_real_escape_string($conn, $this->description);
+        $brandid = mysqli_real_escape_string($conn, $this->brandid);
+        $themeid = mysqli_real_escape_string($conn, $this->themeid);
+        $prices = mysqli_real_escape_string($conn, $this->price);
+        $image = mysqli_real_escape_string($conn, $this->image);
+        $age = mysqli_real_escape_string($conn, $this->age);
 
         $sql = "
         UPDATE
@@ -181,10 +118,11 @@ public static function FindAll()
        set_age = '" . $age . "'
     WHERE 
     set_id = '" . $id . "'
-
 ";
-$result = $database->connection->query($sql);
-     $database->close(); 
+
+        $conn->query($sql);
+
+        $conn->close();
     }
 
     public function insert()
@@ -192,17 +130,17 @@ $result = $database->connection->query($sql);
         $database = new database();
         $database->start();
 
-     
+
         $name = mysqli_real_escape_string($database->connection, $this->name);
         $description = mysqli_real_escape_string($database->connection, $this->description);
         $brandid = mysqli_real_escape_string($database->connection, $this->brandid);
         $themeid = mysqli_real_escape_string($database->connection, $this->themeid);
-        $prices = mysqli_real_escape_string($database->connection, $this->prices);
+        $prices = mysqli_real_escape_string($database->connection, $this->price);
         $image = mysqli_real_escape_string($database->connection, $this->image);
         $age = mysqli_real_escape_string($database->connection, $this->age);
 
-        
-    $sql = "INSERT INTO 'sets'
+
+        $sql = "INSERT INTO 'sets'
     (
         set_name,
         set_description,
@@ -224,19 +162,19 @@ $result = $database->connection->query($sql);
      
     
     )";
-    $database->connection->query($sql);
+        $database->connection->query($sql);
 
-    $database->connection->close();
+        $database->connection->close();
     }
 
     public function DELETE()
     {
         $database = new Database();
-    $database->start();
+        $database->start();
 
-    $id = mysqli_real_escape_string($database->connection, $this->id);
+        $id = mysqli_real_escape_string($database->connection, $this->id);
 
-    $query = "
+        $query = "
     DELETE FROM
             set
             WHERE 
@@ -245,9 +183,29 @@ $result = $database->connection->query($sql);
 
             ";
 
-            
-   $database->connection->query($query);
 
-    $database->close();
+        $database->connection->query($query);
+
+        $database->close();
+    }
+
+    public static function countAll($search = '')
+    {
+        $conn = Database::start();
+
+        $sql = "SELECT COUNT(*) as count FROM `sets` WHERE `set_name` LIKE ?";
+        $stmt = $conn->prepare($sql);
+
+        $search_term = '%' . $search . '%';
+        $stmt->bind_param('s', $search_term);
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $stmt->close();
+        $conn->close();
+
+        return $row['count'];
     }
 }
